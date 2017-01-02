@@ -164,3 +164,46 @@ resource "vtm_license_key" "DEV" {
 
 * ```content``` - Licence key content __(required)__
 * ```name``` - Licence key name __(required)__
+
+## Variable file example
+
+This is example of variables file.
+
+~~~
+variable "provider" {
+  default = "LON3"
+}
+
+variable "license" {
+  default = "6430da6559e3812eb048205460d5250c06024a84"
+}
+
+variable "url" {
+  default = {
+    LON5 = "https://192.168.0.15:9070"
+    LON3 = "https://192.168.0.15:9071"
+  }
+}
+
+variable "username" {
+  default = {
+    LON5 = "admin"
+    LON3 = "admin"
+  }
+}
+
+variable "password" {
+  default = {
+    LON5 = "admin"
+    LON3 = "password"
+  }
+}
+~~~
+
+## Execute plan
+
+~~~
+terraform plan -var 'provider=LON5'
+
+terraform apply -var 'provider=LON5'
+~~~
