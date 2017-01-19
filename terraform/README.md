@@ -64,7 +64,7 @@ fully supported.
 - [ ] Security Settings
 - [ ] Session Persistence Class
 - [x] **Traffic IP Group**
-- [ ] Traffic Manager
+- [x] Traffic Manager
 - [ ] TrafficScript Authenticator
 - [ ] User Authenticator
 - [ ] User Group
