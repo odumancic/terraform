@@ -1,0 +1,93 @@
+hash: c37cb000fbc5e2e2c8fc99274551cd3b5477158f595a5845badb413bd059cbf4
+updated: 2016-09-22T13:48:30.356638918-07:00
+imports:
+- name: github.com/apparentlymart/go-cidr
+  version: a3ebdb999b831ecb6ab8a226e31b07b2b9061c47
+  subpackages:
+  - cidr
+- name: github.com/atlassian/go-vtm
+  version: 2ce113db9d38efcb7286689adae846d5c4fa3eba
+- name: github.com/aws/aws-sdk-go
+  version: 2cc71659118a868dc7544a7ef0808eb42d487011
+  subpackages:
+  - aws
+  - aws/awserr
+  - aws/awsutil
+  - aws/client
+  - aws/client/metadata
+  - aws/corehandlers
+  - aws/credentials
+  - aws/credentials/ec2rolecreds
+  - aws/defaults
+  - aws/ec2metadata
+  - aws/request
+  - aws/session
+  - private/endpoints
+  - private/protocol
+  - private/protocol/query
+  - private/protocol/query/queryutil
+  - private/protocol/rest
+  - private/protocol/restxml
+  - private/protocol/xml/xmlutil
+  - private/signer/v4
+  - private/waiter
+  - service/s3
+- name: github.com/go-ini/ini
+  version: afbd495e5aaea13597b5e14fe514ddeaa4d76fc3
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-getter
+  version: 2822987a64e0df1236ac29dd277ddf79f4871f9a
+  subpackages:
+  - helper/url
+- name: github.com/hashicorp/go-multierror
+  version: d30f09973e19c1dfcd120b2d9c4f168e68d6b5d5
+- name: github.com/hashicorp/go-plugin
+  version: 8cf118f7a2f0c7ef1c82f66d4f6ac77c7e27dc12
+- name: github.com/hashicorp/go-uuid
+  version: 36289988d83ca270bc07c234c36f364b0dd9c9a7
+- name: github.com/hashicorp/go-version
+  version: deeb027c13a95d56c7585df3fe29207208c6706e
+- name: github.com/hashicorp/hcl
+  version: 9a905a34e6280ce905da1a32344b25e81011197a
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/hashicorp/hil
+  version: 0640fefa3817883b16b77bf760c4c3a6f2589545
+  subpackages:
+  - ast
+- name: github.com/hashicorp/terraform
+  version: 84592f5967490d118aae0b61a25d589d269fd0b6
+  subpackages:
+  - config
+  - config/module
+  - dag
+  - dot
+  - flatmap
+  - helper/hashcode
+  - helper/hilmapstructure
+  - helper/schema
+  - plugin
+  - terraform
+- name: github.com/hashicorp/yamux
+  version: df949784da9ed028ee76df44652e42d37a09d7e4
+- name: github.com/jmespath/go-jmespath
+  version: c01cf91b011868172fdcd9f41838e80c9d716264
+- name: github.com/mitchellh/copystructure
+  version: 80adcec1955ee4e97af357c30dee61aadcc02c10
+- name: github.com/mitchellh/go-homedir
+  version: d682a8f0cf139663a984ff12528da460ca963de9
+- name: github.com/mitchellh/mapstructure
+  version: 281073eb9eb092240d33ef253c404f1cca550309
+- name: github.com/mitchellh/reflectwalk
+  version: eecf4c70c626c7cfbb95c90195bc34d386c74ac6
+- name: github.com/satori/go.uuid
+  version: 0aa62d5ddceb50dbcb909d790b5345affd3669b6
+testImports: []

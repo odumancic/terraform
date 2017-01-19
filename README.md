@@ -1,6 +1,50 @@
 # Terraform VTM
 
-The VTM Terraform provider is used to interact with the VTM load balancer.
+The VTM Terraform provider is used to interact with the VTM load balancer based on
+```atlassian/go-vtm``` and ```atlassian/terraform-provider-vtm```
+
+* Added support for managing Traffic Managers .
+
+## Supported Resources
+
+See the `resource_*.go` files for available resources and the
+supported arguments for each resource.
+
+Support for resources is being added as needed. **Bold** resources are
+fully supported.
+
+- [x] **Action Program**
+- [x] **Alerting Action**
+- [ ] Aptimizer Application Scope
+- [ ] Aptimizer Profile
+- [ ] Bandwidth Class
+- [ ] Cloud Credentials
+- [ ] Custom configuration set
+- [x] **Event Type**
+- [x] **Extra File**
+- [ ] GLB Service
+- [ ] Global Settings
+- [x] **License**
+- [ ] Location
+- [x] **Monitor**
+- [x] **Monitor Program**
+- [ ] NAT Configuration
+- [x] Pool
+- [x] **Protection Class**
+- [x] **Rate Shaping Class**
+- [x] **Rule**
+- [x] **SLM Class**
+- [ ] SSL Client Key Pair
+- [x] **SSL Key Pair**
+- [x] **SSL Trusted Certificate**
+- [ ] Security Settings
+- [ ] Session Persistence Class
+- [x] **Traffic IP Group**
+- [x] **Traffic Manager**
+- [ ] TrafficScript Authenticator
+- [ ] User Authenticator
+- [ ] User Group
+- [x] Virtual Server
 
 ## Example usage
 ~~~
@@ -10,9 +54,42 @@ provider "vtm" {
     password = "password"
     verify_ssl = "false"
 }
+
+resource "vtm_traffic_ip_group" "IP_GROUP" {
+  name        = "LON3"
+  enabled     = "true"
+  ipaddresses = ["172.17.0.3"]
+  machines    = ["570f964cf9bb"]
+  note        = "This is test IP traffic group ${var.provider}
+}
+
+resource "vtm_virtual_server" "LON3" {
+  name                  = "virtual_server"
+  enabled               = "true"
+  listen_on_traffic_ips = ["LON3"]
+  port                  = "80"
+  protocol              = "http"
+  pool                  = "test"
+  note                  = "This is test Virtual Server ${var.provider}"
+}
+
+resource "vtm_pool" "Pool" {
+  name = "test"
+  node = {
+    node  = "172.22.212.26:8444"
+    state = "active"
+  }
+  note = "This is test Pool ${var.provider}"
+}
+
+resource "vtm_license_key" "DEV" {
+  name    = "dev_license"
+  content = "${var.license}"
+}
 ~~~
 
 ## Argument Reference
+### vtm
 
 * ```url``` - The protocol, host name, and port for the VTM REST API
 * ```username``` - The username for authenticating against the API
@@ -22,21 +99,79 @@ provider "vtm" {
 
 The provider can also be configured through the environmental variables VTM_URL, VTM_USERNAME, VTM_PASSWORD, VTM_VALID_NETWORKS, and VTM_VERIFY_SSL.
 
-## Supported Resources
-This is short overview of the common resource configuration
+### vtm_traffic_manager
+
+* ```name``` - Name of traffic manager __(required)__
+* ```adminMasterXMLIP``` - Default: "0.0.0.0"
+* ```adminSlaveXMLIP``` - Default: "0.0.0.0"
+* ```allow``` -
+* ```allow_update``` - Default: true
+* ```api_port``` - Default: 9070
+* ```authenticationServerIP``` Default: "0.0.0.0"
+* ```bgp_router_id```
+* ```bind_ip``` - Default: "*"
+* ```bind_ips``` - Default: "*" __(required)__
+* ```cloud_platform```
+* ```community``` - Default: "public"
+* ```config_enabled``` - Default: true
+* ```external_ip```
+* ```fwmark``` - Default: 320
+* ```gateway_ipv4```
+* ```gateway_ipv6```
+* ```hash_algorithm``` - Default: "md5"
+* ```hostname```
+* ```hosts``` - Default: 0
+* ```if``` - Default: 0
+* ```ip``` - Default: 0
+* ```iptables_enabled``` - Default: true
+* ```ipv4_forwarding``` - Default: false
+* ```ipv6_forwarding``` - Default: false
+* ```java_port``` - Default: 9060
+* ```licence_agreed``` - Default: false
+* ```location```
+* ```manageazureroutes``` - Default: true
+* ```managedpa``` - ~~Default: true~~ Not implemented
+* ```manageec2conf``` - Default: true
+* ```manageiptrans``` - Default: true
+* ```managereturnpath``` - Default: true
+* ```managevpcconf``` - Default: true
+* ```name_servers```
+* ```nameip```
+* ```ntpservers```
+* ```num_aptimizer_threads``` - Default: 0
+* ```num_children``` - Default: 0
+* ```numberOfCPUs``` - Default: 0
+* ```ospfv2_ip```
+* ```port``` - Default: 9080
+* ```restServerPort``` - Default: 11003
+* ```routes``` - Default: none
+* ```routing_table``` - Default: 320
+* ```search_domains``` - Default: none
+* ```security_level``` - Default: "noauthnopriv"
+* ```shim_client_id```
+* ```shim_client_key```
+* ```shim_enabled``` - Default: false
+* ```shim_ips```
+* ```shim_load_balance``` - Default: "round_robin"
+* ```shim_log_level``` - Default: "notice"
+* ```shim_mode``` - Default: "portal"
+* ```shim_portal_url```
+* ```shim_proxy_host```
+* ```snmp_bind_ip``` - Default: "*"
+* ```snmp_enabled``` - Default: "false"
+* ```snmp_port``` - Default: "default"
+* ```ssh_enabled``` - Default: "true"
+* ```ssh_password_allowed``` - Default: "true"
+* ```ssh_port``` - Default: 22
+* ```timezone``` - Default: "US/Pacific"
+* ```trafficip```
+* ```updaterIP``` - Default: "0.0.0.0"
+* ```username```
+
 ### vtm_traffic_ip_group example
 
-~~~
-resource "vtm_traffic_ip_group" "IP_GROUP" {
-  name        = "${var.provider}"
-  enabled     = "true"
-  ipaddresses = ["172.17.0.3"]
-  machines    = ["570f964cf9bb"]
-  note        = "This is test IP traffic group ${var.provider}
-}
-~~~
 
-* ```name``` - Name of traffic group __(required)__
+* ```name``` - Name of traffic ip group __(required)__
 * ```enabled``` - Traffic group is disabled or enabled, Default:  true
 * ```ipaddresses``` - IP address, separated by comma
 * ```machines``` - Traffic manager ID
@@ -51,18 +186,6 @@ resource "vtm_traffic_ip_group" "IP_GROUP" {
 * ```slaves```
 
 ### vtm_virtual_server example
-
-~~~
-resource "vtm_virtual_server" "LON3" {
-  name                  = "virtual_server1"
-  enabled               = "true"
-  listen_on_traffic_ips = ["LON5"]
-  port                  = "80"
-  protocol              = "http"
-  pool                  = "test1"
-  note                  = "This is test Virtual Server ${var.provider}"
-}
-~~~
 
 * ```name``` - Name of virtual Server __(required)__
 * ```enabled``` - Virtual server is disabled or enabled, Default:  true
@@ -109,17 +232,6 @@ resource "vtm_virtual_server" "LON3" {
 * ```web_cache_error_page_time``` - Default:  30
 
 ### vtm_pool example
-~~~
-resource "vtm_pool" "Pool1" {
-  name = "test1"
-
-  node = {
-    node  = "172.22.212.26:8444"
-    state = "active"
-  }
-  note = "This is test Pool ${var.provider}"
-}
-~~~
 
 * ```name``` - Name of Virtual pool __(required)__
 * ```bandwidth_class``` - Default:  ""
@@ -155,12 +267,6 @@ resource "vtm_pool" "Pool1" {
 * ```udp_accept_from_mask``` - Default:  ""
 
 ### vtm_license_key example
-~~~
-resource "vtm_license_key" "DEV" {
-  name    = "dev_license"
-  content = "${var.license}"
-}
-~~~
 
 * ```content``` - Licence key content __(required)__
 * ```name``` - Licence key name __(required)__
@@ -173,25 +279,21 @@ This is example of variables file.
 variable "provider" {
   default = "LON3"
 }
-
 variable "license" {
   default = "6430da6559e3812eb048205460d5250c06024a84"
 }
-
 variable "url" {
   default = {
     LON5 = "https://192.168.0.15:9070"
     LON3 = "https://192.168.0.15:9071"
   }
 }
-
 variable "username" {
   default = {
     LON5 = "admin"
     LON3 = "admin"
   }
 }
-
 variable "password" {
   default = {
     LON5 = "admin"
