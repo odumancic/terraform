@@ -55,6 +55,13 @@ provider "vtm" {
     verify_ssl = "false"
 }
 
+resource "vtm_traffic_manager" "LON3"{
+        provider = "vtm.LON3"
+        name = "a198d9291760"
+        bind_ips = ["*"]
+        ntpservers = ["0.vyatta.pool.ntp.org","1.vyatta.pool.ntp.org"]
+}
+
 resource "vtm_traffic_ip_group" "IP_GROUP" {
   name        = "LON3"
   enabled     = "true"
@@ -277,30 +284,152 @@ This is example of variables file.
 
 ~~~
 variable "provider" {
-  default = "LON3"
+  default = "LON1"
 }
 variable "license" {
   default = "6430da6559e3812eb048205460d5250c06024a84"
 }
 variable "url" {
   default = {
-    LON5 = "https://192.168.0.15:9070"
-    LON3 = "https://192.168.0.15:9071"
+    LON1 = "https://192.168.0.15:9070"
+    LON2 = "https://192.168.0.15:9071"
   }
 }
 variable "username" {
   default = {
-    LON5 = "admin"
-    LON3 = "admin"
+    LON1 = "admin"
+    LON2 = "admin"
   }
 }
 variable "password" {
   default = {
-    LON5 = "admin"
-    LON3 = "password"
+    LON1 = "admin"
+    LON2 = "password"
   }
 }
 ~~~
+
+## vtm.tf example using variables and multiple providers
+~~~
+provider "vtm" {
+  url        = "${var.url["${var.provider}"]}"
+  username   = "${var.username["${var.provider}"]}"
+  password   = "${var.password["${var.provider}"]}"
+  verify_ssl = "false"
+}
+
+provider "vtm" {
+  alias      = "LON1"
+  url        = "${var.url["LON1"]}"
+  username   = "${var.username["LON1"]}"
+  password   = "${var.password["LON1"]}"
+  verify_ssl = "false"
+}
+
+provider "vtm" {
+  alias      = "LON2"
+  url        = "${var.url["LON2"]}"
+  username   = "${var.username["LON2"]}"
+  password   = "${var.password["LON2"]}"
+  verify_ssl = "false"
+}
+
+## License
+
+resource "vtm_license_key" "DEV" {
+  provider= "vtm.LON1"
+  name    = "dev_license"
+  content = "${var.license}"
+}
+
+## LON1
+
+resource "vtm_traffic_manager" "LON1"{
+  provider 		= "vtm.LON1"
+  name			= "a198d9291760"
+  bind_ips 		= ["*"]
+  ntpservers 	= ["0.vyatta.pool.ntp.org","1.vyatta.pool.ntp.org", "2.vyatta.pool.ntp.org", "3.vyatta.pool.ntp.org"]
+}
+
+resource "vtm_traffic_ip_group" "LON1" {
+  provider    = "vtm.LON1"
+  name        = "LON1"
+  enabled     = "true"
+  ipaddresses = ["172.17.0.4"]
+  machines    = ["${vtm_traffic_manager.LON1.id}"]
+  note        = "This is test IP traffic group ${vtm_traffic_manager.LON1.id}"
+}
+
+resource "vtm_virtual_server" "LON1" {
+  provider 				= "vtm.LON1"
+  name                  = "virtual_server"
+  enabled               = "true"
+  listen_on_traffic_ips = ["${vtm_traffic_ip_group.LON1.name}"]
+  port                  = "80"
+  protocol              = "http"
+  pool                  = "Bar"
+  note                  = "This is test Virtual Server ${vtm_traffic_ip_group.LON1.name}"
+}
+
+resource "vtm_pool" "LON1" {
+  provider 	= "vtm.LON1"
+  name 		= "Bar"
+  node 		= {
+    node  	= "172.22.212.26:8444"
+    state 	= "active"
+  }
+  note 		= "This is test Pool ${vtm_virtual_server.LON1.name}"
+}
+
+# LON2
+
+resource "vtm_traffic_manager" "LON2"{
+  provider              = "vtm.LON2"
+  name                  = "1f14b390e423"
+  bind_ips              = ["*"]
+  ntpservers    = ["0.vyatta.pool.ntp.org","1.vyatta.pool.ntp.org", "2.vyatta.pool.ntp.org", "3.vyatta.pool.ntp.org"]
+}
+
+resource "vtm_traffic_ip_group" "LON2" {
+  provider    = "vtm.LON2"
+  name        = "LON2"
+  enabled     = "true"
+  ipaddresses = ["172.17.0.2"]
+  machines    = ["${vtm_traffic_manager.LON2.id}"]
+  note        = "This is test IP traffic group ${vtm_traffic_manager.LON2.id}"
+}
+
+resource "vtm_virtual_server" "LON2" {
+  provider              = "vtm.LON2"
+  name                  = "virtual_server"
+  enabled               = "true"
+  listen_on_traffic_ips = ["${vtm_traffic_ip_group.LON2.name}"]
+  port                  = "80"
+  protocol              = "http"
+  pool                  = "Bar"
+  note                  = "This is test Virtual Server ${vtm_traffic_ip_group.LON2.name}"
+}
+
+resource "vtm_pool" "LON2" {
+  provider      = "vtm.LON2"
+  name          = "Bar"
+  node          = {
+    node        = "172.22.212.26:8444"
+    state       = "active"
+  }
+  note          = "This is test Pool ${vtm_virtual_server.LON2.name}"
+}
+
+
+output "LON1" {
+  value = "${vtm_traffic_manager.LON1.id}"
+}
+
+output "LON2" {
+  value = "${vtm_traffic_manager.LON2.id}"
+}
+~~~
+
 
 ## Execute plan
 
